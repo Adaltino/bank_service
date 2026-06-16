@@ -1,0 +1,157 @@
+<div class="max-w-4xl mx-auto py-10 px-4">
+
+  <div class="bg-white rounded-2xl shadow-sm border p-8">
+
+    <h1 class="text-3xl font-bold mb-2">
+      Welcome, <%= current_user.email %>
+    </h1>
+
+    <p class="text-gray-500 mb-8">
+      Your digital account dashboard
+    </p>
+
+    <div class="bg-black text-white rounded-2xl p-8">
+
+      <p class="text-sm uppercase opacity-70 mb-2">
+        Current Balance
+      </p>
+
+      <h2 class="text-5xl font-bold">
+        <%= number_to_currency(@account.balance) %>
+      </h2>
+
+    </div>
+
+    <div class="flex gap-4 mt-8">
+
+      <%= link_to "Deposit",
+        deposit_path,
+        class: "bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition" %>
+
+      <%= link_to "Withdraw",
+        withdraw_path,
+        class: "border border-black px-6 py-3 rounded-xl hover:bg-gray-100 transition" %>
+
+      <%= link_to "Pix Payment",
+        pix_path,
+        class: "border border-black px-6 py-3 rounded-xl hover:bg-gray-100 transition" %>
+
+    </div>
+
+    <% unless @account.card %>
+
+      <div class="mt-6">
+
+        <%= button_to "Create Card",
+          card_path,
+          method: :post,
+          class: "bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition" %>
+
+      </div>
+
+    <% end %>
+
+    <div class="mt-10">
+
+      <h2 class="text-2xl font-bold mb-6">
+        Transactions
+      </h2>
+
+      <div class="space-y-4">
+        <% @account.transactions.order(created_at: :desc).each do |transaction| %>
+        <div class="border rounded-xl p-4 flex justify-between items-center">
+          <div>
+              <p class="font-semibold">
+                <%= transaction.transaction_type.humanize %>
+              </p>
+
+              <p class="text-sm text-gray-500">
+                <%= transaction.description %>
+              </p>
+            </div>
+
+            <p class="font-bold">
+              <%= number_to_currency(transaction.amount) %>
+            </p>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+    <% if @account.card %>
+
+      <div class="mt-10 bg-gradient-to-r from-gray-900 to-black text-white rounded-3xl p-8 shadow-lg">
+
+        <div class="flex justify-between items-start mb-10">
+
+          <div>
+            <p class="text-sm opacity-70">
+              Digital Card
+            </p>
+
+            <h2 class="text-2xl font-bold mt-2">
+              System Bank
+            </h2>
+          </div>
+
+          <p class="uppercase text-sm tracking-widest">
+            VISA
+          </p>
+
+        </div>
+
+        <div class="mb-8">
+
+          <p class="text-3xl tracking-widest font-mono">
+            <%= @account.card.formatted_number %>
+          </p>
+
+        </div>
+
+        <div class="flex justify-between items-end">
+
+          <div>
+            <p class="text-xs opacity-70">
+              VALID THRU
+            </p>
+
+            <p class="font-semibold">
+              <%= @account.card.expiration_date %>
+            </p>
+          </div>
+
+          <div>
+            <p class="text-xs opacity-70">
+              CVV
+            </p>
+
+            <p class="font-semibold">
+              <%= @account.card.cvv %>
+            </p>
+          </div>
+
+          <div>
+            <p class="text-xs opacity-70">
+              AVAILABLE LIMIT
+            </p>
+
+            <p class="font-bold text-xl">
+              <%= number_to_currency(
+                @account.card.available_limit
+              ) %>
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    <% end %>
+
+  </div>
+
+</div>
